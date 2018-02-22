@@ -1,0 +1,65 @@
+{
+  "name": "three-gltf-viewer",
+  "productName": "glTF Viewer",
+  "version": "1.1.0",
+  "description": "Preview glTF models using three.js and a drag-and-drop interface.",
+  "main": "electron/main.js",
+  "browser": "src/app.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "browserify src/app.js -o bundle.js",
+    "build:validator": "echo \"window.gltfValidator = require('gltf-validator');\" | browserify - > lib/gltf-validator.js",
+    "package": "npm run package:windows && npm run package:mac && npm run package:linux",
+    "package:windows": "electron-packager . gltf-viewer --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/icons/glTF-Viewer.ico --out=dist --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"glTF Viewer\"",
+    "package:mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/glTF-Viewer.icns --out=dist",
+    "package:linux": "electron-packager . gltf-viewer --overwrite --asar --platform=linux --arch=x64 --icon=assets/icons/glTF-Viewer.png --out=dist",
+    "dev": "budo src/app.js:bundle.js --port 3000",
+    "dev:electron": "concurrently \"watchify src/app.js -o bundle.js\" \"npm start\"",
+    "test": "node scripts/gen_test.js",
+    "deploy": "npm run build && now --static && now alias && npm run clean",
+    "clean": "rm bundle.js",
+    "postversion": "git push && git push --tags"
+  },
+  "now": {
+    "alias": "gltf-viewer.donmccurdy.com",
+    "public": true
+  },
+  "keywords": [
+    "gltf",
+    "three.js",
+    "three",
+    "3d",
+    "model",
+    "modeling",
+    "webgl"
+  ],
+  "author": "Don McCurdy <dm@donmccurdy.com> (https://www.donmccurdy.com)",
+  "license": "MIT",
+  "dependencies": {
+    "dat.gui": "^0.7.0",
+    "gltf-validator": "^2.0.0-dev.1.6",
+    "handlebars": "^4.0.11",
+    "open": "0.0.5",
+    "query-string": "^4.3.4",
+    "serve": "^5.2.4",
+    "three": "^0.90.0",
+    "three-vignette-background": "^1.0.3",
+    "zipjs-browserify": "^1.0.1"
+  },
+  "devDependencies": {
+    "browserify": "^14.3.0",
+    "budo": "^9.4.7",
+    "chalk": "^2.1.0",
+    "concurrently": "^3.5.0",
+    "electron": "^1.7.9",
+    "electron-packager": "^9.1.0",
+    "glslify": "^6.1.0",
+    "node-fetch": "^1.7.3",
+    "watchify": "^3.9.0"
+  },
+  "browserify": {
+    "transform": [
+      "glslify"
+    ]
+  }
+}
